@@ -1,7 +1,8 @@
+
 # Usage
 #   Start:              docker compose up -d
 #   Stop:               docker compose down
-#   Dev mode:           docker compose -f docker-compose.yml -f ./dev/docker-compose.dev.yml up -d
+#   Dev mode:            docker compose -f docker-compose.yml -f ./dev/docker-compose.dev.yml up -d
 #   Reset everything:   sh reset.sh
 #
 # Notes:
@@ -443,7 +444,7 @@ services:
       api-gw:
         condition: service_healthy
     healthcheck:
-      test: ["CMD-SHELL", "timeout 1 bash -c '</dev/tcp/127.0.0.1/9000'"]
+      test: ["CMD-SHELL", "timeout 1 bash -c '</dev/tcp/127.0.0.1:9000'"]
       interval: 5s
       timeout: 5s
       retries: 3
@@ -480,6 +481,11 @@ services:
     # To upgrade an existing Postgres 15 database in place, see utils/upgrade-pg17.sh.
     image: supabase/postgres:17.6.1.136
     restart: unless-stopped
+    networks:
+      default: {}
+      supabase-net:
+        aliases:
+          - supabase-db
     volumes:
       - ./volumes/db/realtime.sql:/docker-entrypoint-initdb.d/migrations/99-realtime.sql:Z
       # Must be superuser to create event trigger
@@ -586,3 +592,8 @@ services:
 volumes:
   db-config:
   deno-cache:
+
+networks:
+  supabase-net:
+    name: supabase-net
+    external: true
