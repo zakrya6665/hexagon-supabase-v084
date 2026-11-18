@@ -486,6 +486,7 @@ services:
       supabase-net:
         aliases:
           - supabase-db
+          - db
     volumes:
       - ./volumes/db/realtime.sql:/docker-entrypoint-initdb.d/migrations/99-realtime.sql:Z
       # Must be superuser to create event trigger
